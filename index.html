@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tiếng Anh 2 – Kiểm tra giữa kỳ</title>
+<style>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#f3f5f9;color:#1b2333;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:14px 12px 28px}
+h1{font-size:1.35rem;margin:6px 0 4px}
+h2{font-size:1.05rem;margin:0 0 6px}
+.card{background:#fff;border:1px solid #d6dce8;border-radius:10px;padding:14px;margin:0 0 14px}
+.sub{color:#556075;margin:0 0 10px}
+label.f{display:block;font-weight:600;margin:12px 0 4px}
+input[type=text],input[type=tel],textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1.5px solid #b9c2d3;border-radius:8px;background:#fff;color:inherit}
+textarea{min-height:190px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible{outline:3px solid #9db8f5;outline-offset:1px}
+button{font:inherit;font-weight:600;min-height:48px;padding:0 18px;border:0;border-radius:8px;background:#1a4fc4;color:#fff;cursor:pointer}
+button.alt{background:#e4e9f4;color:#1b2333}
+button:disabled{opacity:.55}
+.full{width:100%;margin-top:16px}
+.err{color:#b42318;margin:10px 0 0;white-space:pre-line}
+ol.rules{margin:6px 0 0;padding-left:20px}ol.rules li{margin:4px 0}
+footer{text-align:center;color:#556075;font-size:.85rem;padding:6px 12px 22px}
+footer a{color:#1a4fc4}
+body.inexam footer{display:none}
+.hide{display:none!important}
+/* exam */
+#bar{position:fixed;top:0;left:0;right:0;z-index:20;background:#16243f;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#bar .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px}
+#timer{font:700 1.4rem/1 ui-monospace,Menlo,Consolas,monospace;min-width:70px}
+#timer.low{color:#ffb4a8}
+#prog{flex:1;font-size:.85rem;opacity:.9}
+#bar button{min-height:42px;padding:0 12px;font-size:.9rem}
+#bar button.alt{background:#35476b;color:#fff}
+#nav{max-width:760px;margin:0 auto;background:#fff;color:#1b2333;padding:10px;max-height:52vh;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+#nav button{min-height:42px;padding:0;background:#e4e9f4;color:#1b2333}
+#nav button.d{background:#1a4fc4;color:#fff}
+#exam{padding-top:62px}
+.q{padding:12px 0;border-top:1px solid #e6eaf2;scroll-margin-top:68px}
+.q:first-of-type{border-top:0}
+.num{font-weight:700;color:#1a4fc4;margin-right:6px}
+.ctx,.pas{white-space:pre-line;background:#f3f5f9;border-left:4px solid #b9c2d3;padding:8px 10px;margin:6px 0;border-radius:4px}
+.ins{font-style:italic;color:#3b465c;margin:2px 0 8px}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opts.lt{grid-template-columns:repeat(4,1fr)}
+.opt{display:flex;gap:8px;align-items:flex-start;padding:11px 12px;min-height:48px;border:1.5px solid #b9c2d3;border-radius:8px;cursor:pointer;background:#fff}
+.opt.on{border-color:#1a4fc4;background:#e8efff}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.lt .opt{justify-content:center;align-items:center}
+.pre{font-weight:700;margin:6px 0 4px}
+#wc{color:#556075;font-size:.85rem;margin-top:4px}
+/* bài đọc song song với câu hỏi */
+.pane{position:sticky;top:58px;z-index:5;background:#fff;border:1.5px solid #b9c2d3;border-radius:8px;padding:8px;margin:6px 0 10px;max-height:38vh;overflow:auto;box-shadow:0 3px 8px rgba(0,0,0,.08)}
+.pane .pas{margin:6px 0 0}
+.pane .tg{min-height:36px;padding:0 12px;font-size:.85rem}
+.qp .q{scroll-margin-top:calc(38vh + 76px)}
+@media(min-width:900px){
+  body.inexam main,body.inexam #bar .row,body.inexam #nav{max-width:1120px}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .pane{top:70px;max-height:calc(100vh - 86px);margin:0}
+  .pane .tg{display:none}
+  .pane .pas.hide{display:block!important}
+  .qp .q{scroll-margin-top:72px}
+}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(10,16,30,.6);z-index:50;display:flex;align-items:center;justify-content:center;padding:18px}
+#modal .box{background:#fff;border-radius:12px;padding:18px;max-width:420px;width:100%}
+#modal .btns{display:flex;gap:10px;margin-top:14px}#modal .btns button{flex:1}
+.code{font:700 2rem/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em;background:#e8efff;border:2px dashed #1a4fc4;border-radius:10px;padding:14px;text-align:center;margin:12px 0;user-select:all}
+</style>
+</head>
+<body>
+
+<div id="bar" class="hide">
+  <div class="row">
+    <div id="timer">--:--</div>
+    <div id="prog"></div>
+    <button id="btnNav" class="alt" type="button">Danh sách</button>
+    <button id="btnSubmit" type="button">Nộp bài</button>
+  </div>
+  <div id="nav" class="hide"></div>
+</div>
+
+<main>
+  <!-- Đăng nhập -->
+  <section id="login">
+    <h1>Tiếng Anh 2 – Kiểm tra giữa kỳ</h1>
+    <p class="sub">Kỹ năng Đọc-Viết · Mã học phần TAC20623H · Thời gian làm bài 60 phút</p>
+    <div class="card">
+      <h2>Quy định làm bài kiểm tra</h2>
+      <ol class="rules">
+        <li>Mỗi MSSV chỉ được vào làm bài một lần. Không tải lại trang, không đăng nhập lại.</li>
+        <li>Thời gian tính theo đồng hồ máy chủ. Hết giờ, hệ thống tự thu bài.</li>
+        <li>Không rời khỏi trang làm bài (chuyển tab, chuyển ứng dụng, mở Zalo, khóa màn hình, nghe cuộc gọi). Nếu rời trang, bài bị thu ngay và chỉ chấm phần đã trả lời.</li>
+        <li>Không sử dụng tài liệu hay hỗ trợ từ người khác.</li>
+        <li>Giữ mạng ổn định và pin đủ dùng. Sau khi nộp, ghi lại <b>Mã xác nhận</b> và đưa giám thị kiểm tra.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <label class="f" for="ln">Họ và tên lót</label>
+      <input id="ln" type="text" maxlength="60" autocomplete="off" placeholder="Ví dụ: Nguyễn Văn">
+      <label class="f" for="fn">Tên</label>
+      <input id="fn" type="text" maxlength="30" autocomplete="off" placeholder="Ví dụ: An">
+      <label class="f" for="id">MSSV (12 chữ số)</label>
+      <input id="id" type="tel" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="012345678901">
+      <label class="f" for="cl">Lớp</label>
+      <input id="cl" type="text" maxlength="30" autocomplete="off">
+      <button id="btnStart" class="full" type="button">Bắt đầu làm bài</button>
+      <div id="loginErr" class="err" role="alert"></div>
+    </div>
+  </section>
+
+  <!-- Bài làm -->
+  <section id="exam" class="hide"><div id="qs"></div></section>
+
+  <!-- Kết quả -->
+  <section id="result" class="hide">
+    <div class="card" id="resBox"></div>
+  </section>
+</main>
+
+<footer id="foot">Tiếng Anh 2 | Học kỳ: II – 2026-2027 Instructor: Prepared by <a href="mailto:huynqnn@ldxh.edu.vn">huynqnn@ldxh.edu.vn</a></footer>
+
+<div id="modal" class="hide" role="dialog" aria-modal="true"><div class="box" id="mbox"></div></div>
+
+<script>
+(function () {
+"use strict";
+// DÁN LINK /exec VÀO ĐÂY (ví dụ: https://script.google.com/macros/s/XXXX/exec)
+var API_URL = "https://script.google.com/macros/s/AKfycbxdveKv2f87RcUsSYeRxgLFqonoWfXxW0q1lONr4piUNv3vJ210g9Hq21iN0LHuuSF2/exec";
+
+var LS_KEY = "te2_midterm_pending_v1";
+var $ = function (id) { return document.getElementById(id); };
+var st = { phase: "login", token: "", endMs: 0, offset: 0, ans: {}, items: [], blur: [], reason: "", timer: null, retryT: null, busy: false, saveT: null };
+
+function el(tag, attrs) {
+  var e = document.createElement(tag);
+  attrs = attrs || {};
+  for (var k in attrs) {
+    if (k === "class") e.className = attrs[k];
+    else if (k === "text") e.textContent = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  for (var i = 2; i < arguments.length; i++) { if (arguments[i] != null && arguments[i] !== false) e.append(arguments[i]); }
+  return e;
+}
+function show(id) {
+  ["login", "exam", "result"].forEach(function (s) { $(s).classList.toggle("hide", s !== id); });
+  document.body.classList.toggle("inexam", id === "exam");
+  $("bar").classList.toggle("hide", id !== "exam");
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Gọi máy chủ ---------- */
+async function api(action, payload, keepalive) {
+  if (!API_URL) return { ok: false, code: "NO_API", message: "Chưa cấu hình đường dẫn máy chủ (API_URL). Hãy báo giám thị." };
+  var ac = new AbortController();
+  var t = setTimeout(function () { ac.abort(); }, 25000);
+  try {
+    var r = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: action, payload: payload }),
+      signal: ac.signal, keepalive: !!keepalive, credentials: "omit"
+    });
+    var txt = await r.text();
+    try { return JSON.parse(txt); }
+    catch (e) { return { ok: false, code: "NOT_JSON", message: "Máy chủ trả về dữ liệu không hợp lệ (có thể do chưa cấp quyền hoặc sai đường dẫn /exec). Hãy báo giám thị." }; }
+  } catch (e) {
+    return { ok: false, code: "NETWORK", message: e && e.name === "AbortError" ? "Máy chủ phản hồi quá chậm. Kiểm tra mạng rồi báo giám thị." : "Không kết nối được máy chủ. Kiểm tra mạng rồi báo giám thị." };
+  } finally { clearTimeout(t); }
+}
+
+/* ---------- Bản sao dự phòng ---------- */
+function savePending() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ token: st.token, answers: st.ans, reason: st.phase === "exam" ? "reopen" : st.reason, log: st.blur.join(" ") }));
+  } catch (e) {}
+}
+function clearPending() { try { localStorage.removeItem(LS_KEY); } catch (e) {} }
+function loadPending() {
+  try { var s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+}
+function queueSave() { clearTimeout(st.saveT); st.saveT = setTimeout(savePending, 400); }
+
+/* ---------- Đăng nhập ---------- */
+$("btnStart").addEventListener("click", async function () {
+  var ln = $("ln").value.trim(), fn = $("fn").value.trim(), id = $("id").value.trim(), cl = $("cl").value.trim();
+  var er = $("loginErr"); er.textContent = "";
+  if (!ln || !fn || !cl) { er.textContent = "Vui lòng điền đủ Họ và tên lót, Tên và Lớp."; return; }
+  if (!/^\d{12}$/.test(id)) { er.textContent = "MSSV phải gồm đúng 12 chữ số."; return; }
+  var b = $("btnStart"); b.disabled = true; b.textContent = "Đang vào bài…";
+  var res = await api("startExam", { lastName: ln, firstName: fn, mssv: id, className: cl }, false);
+  b.disabled = false; b.textContent = "Bắt đầu làm bài";
+  if (!res || !res.ok) { er.textContent = (res && res.message) || "Không vào được bài. Hãy báo giám thị."; return; }
+  st.token = res.token; st.ans = {}; st.blur = []; st.phase = "exam";
+  st.endMs = res.startMs + res.durationSec * 1000;
+  st.offset = res.serverNow - Date.now();
+  savePending();
+  renderExam(res.exam);
+  show("exam");
+  tick(); st.timer = setInterval(tick, 500);
+  progress();
+});
+
+/* ---------- Hiển thị đề ---------- */
+function labelOf(id) { return /^\d+$/.test(id) ? id + "." : (id === "wl" ? "Letter" : "Viết lại " + id.slice(1) + "."); }
+function navOf(id) { return /^\d+$/.test(id) ? id : (id === "wl" ? "✉" : "V" + id.slice(1)); }
+
+function renderExam(ex) {
+  var root = $("qs"); root.textContent = ""; st.items = [];
+  ex.sections.forEach(function (s) {
+    var c = el("div", { class: "card" }, el("h2", { text: s.title }));
+    if (s.instr) c.append(el("p", { class: "ins", text: s.instr }));
+    if (s.passage) {
+      var body = el("div", { class: "pas", text: s.passage });
+      var tg = el("button", { type: "button", class: "alt tg", text: "Thu gọn bài đọc" });
+      tg.addEventListener("click", function () {
+        var h = body.classList.toggle("hide");
+        tg.textContent = h ? "Mở bài đọc" : "Thu gọn bài đọc";
+      });
+      var qp = el("div", { class: "qp" });
+      s.items.forEach(function (it) { qp.append(renderItem(it)); });
+      c.append(el("div", { class: "split" }, el("div", { class: "pane" }, tg, body), qp));
+    } else {
+      s.items.forEach(function (it) { c.append(renderItem(it)); });
+    }
+    root.append(c);
+  });
+  var nav = $("nav"); nav.textContent = "";
+  st.items.forEach(function (it) {
+    var b = el("button", { type: "button", id: "n-" + it, text: navOf(it) });
+    b.addEventListener("click", function () {
+      $("nav").classList.add("hide");
+      $("q-" + it).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    nav.append(b);
+  });
+}
+
+function renderItem(it) {
+  var id = it.id; st.items.push(id);
+  var box = el("div", { class: "q", id: "q-" + id });
+  if (it.ctx) box.append(el("div", { class: it.pre ? "pre" : "ctx" }, el("span", { class: "num", text: it.pre ? labelOf(id) : "" }), it.ctx));
+  if (it.opts) {
+    box.append(el("div", {}, el("span", { class: "num", text: labelOf(id) }), it.stem));
+    var allLetters = it.opts.every(function (o) { return !o[1]; });
+    var grid = el("div", { class: "opts" + (allLetters ? " lt" : "") });
+    it.opts.forEach(function (o) {
+      var inp = el("input", { type: "radio", name: "r" + id, value: o[0] });
+      var lab = el("label", { class: "opt" }, inp, el("b", { text: o[1] ? o[0] + "." : o[0] }), o[1] ? el("span", { text: o[1] }) : null);
+      inp.addEventListener("change", function () {
+        st.ans[id] = o[0];
+        Array.prototype.forEach.call(grid.children, function (l) { l.classList.toggle("on", l.firstChild.checked); });
+        progress(); queueSave();
+      });
+      grid.append(lab);
+    });
+    box.append(grid);
+  } else if (it.t === "text") {
+    box.append(el("div", { class: "pre", text: "→ " + it.pre + " …" }));
+    var ti = el("input", { type: "text", maxlength: "400", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": "Viết lại câu " + id.slice(1) });
+    ti.addEventListener("input", function () { st.ans[id] = ti.value; progress(); queueSave(); });
+    box.append(ti);
+  } else {
+    var ta = el("textarea", { maxlength: "4000", spellcheck: "false", "aria-label": "Letter to Jenna", placeholder: "Dear Jenna, …" });
+    var wc = el("div", { id: "wc", text: "0 từ (khoảng 100 từ)" });
+    ta.addEventListener("input", function () {
+      st.ans[id] = ta.value;
+      var n = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+      wc.textContent = n + " từ (khoảng 100 từ)";
+      progress(); queueSave();
+    });
+    box.append(ta, wc);
+  }
+  return box;
+}
+
+function answered(id) { var v = st.ans[id]; return typeof v === "string" && v.trim() !== ""; }
+function progress() {
+  var n = 0;
+  st.items.forEach(function (id) {
+    var d = answered(id); if (d) n++;
+    var b = $("n-" + id); if (b) b.classList.toggle("d", d);
+  });
+  $("prog").textContent = "Đã làm " + n + "/" + st.items.length;
+  return n;
+}
+
+/* ---------- Đồng hồ ---------- */
+function tick() {
+  var rem = Math.max(0, Math.round((st.endMs - (Date.now() + st.offset)) / 1000));
+  var m = Math.floor(rem / 60), s = rem % 60;
+  $("timer").textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  $("timer").classList.toggle("low", rem <= 300);
+  if (rem <= 0 && st.phase === "exam") submit("timeup");
+}
+
+$("btnNav").addEventListener("click", function () { $("nav").classList.toggle("hide"); });
+
+/* ---------- Hộp thoại xác nhận (tự dựng) ---------- */
+function openModal(node) { var b = $("mbox"); b.textContent = ""; b.append(node); $("modal").classList.remove("hide"); }
+function closeModal() { $("modal").classList.add("hide"); }
+$("btnSubmit").addEventListener("click", function () {
+  if (st.phase !== "exam") return;
+  var n = progress(), total = st.items.length;
+  var no = el("button", { type: "button", class: "alt", text: "Làm tiếp" });
+  var yes = el("button", { type: "button", text: "Nộp bài" });
+  no.addEventListener("click", closeModal);
+  yes.addEventListener("click", function () { closeModal(); submit("manual"); });
+  openModal(el("div", {}, el("h2", { text: "Nộp bài?" }),
+    el("p", { text: "Bạn đã làm " + n + "/" + total + " mục" + (n < total ? ", còn " + (total - n) + " mục chưa làm." : ".") + " Sau khi nộp không thể sửa." }),
+    el("div", { class: "btns" }, no, yes)));
+});
+
+/* ---------- Nộp bài ---------- */
+function submit(reason) {
+  if (st.phase !== "exam") return;
+  st.phase = "sending"; st.reason = reason;
+  clearInterval(st.timer); clearTimeout(st.saveT); closeModal();
+  savePending(); show("result"); sending(false);
+  upload(reason === "visibility" || reason === "pagehide");
+}
+
+function sending(failed) {
+  var b = $("resBox"); b.textContent = "";
+  b.append(el("h2", { text: failed ? "Chưa gửi được bài" : "Đang gửi bài…" }),
+    el("p", { text: failed ? "Bài làm đang được giữ trên máy và sẽ tự gửi lại. Hãy giữ nguyên trang này, kiểm tra mạng và báo giám thị nếu quá 1 phút." : "Vui lòng không đóng trang." }));
+}
+
+async function upload(keepalive) {
+  if (st.busy) return;
+  st.busy = true; clearTimeout(st.retryT);
+  var res = await api("submitExam", { token: st.token, answers: st.ans, reason: st.reason, log: st.blur.join(" ").slice(0, 250) }, keepalive);
+  st.busy = false;
+  if (res && res.ok) { clearPending(); st.phase = "done"; done(res); return; }
+  if (res && res.code === "BAD_TOKEN") {
+    clearPending(); st.phase = "done";
+    var b = $("resBox"); b.textContent = "";
+    b.append(el("h2", { text: "Không ghi nhận được bài" }), el("p", { text: res.message }));
+    return;
+  }
+  sending(true);
+  st.retryT = setTimeout(function () { upload(false); }, 5000);
+}
+
+var STATUS_VI = {
+  "Submitted": "Đã nộp bài.",
+  "Timed out": "Bài nộp sau khi hết giờ. Phần đã nhận vẫn được chấm.",
+  "Violation": "Bài bị thu tự động vì rời khỏi trang làm bài. Phần đã trả lời vẫn được chấm."
+};
+function done(res) {
+  var b = $("resBox"); b.textContent = "";
+  b.append(el("h2", { text: "Đã ghi nhận bài làm" }),
+    el("p", { text: STATUS_VI[res.status] || res.status }),
+    el("div", { class: "code", text: res.code || "—" }),
+    el("p", { class: "sub", text: "Thời điểm nộp: " + (res.submittedAt || "—") + ". Ghi lại Mã xác nhận và đưa giám thị kiểm tra." }));
+}
+
+/* ---------- Sự kiện rời trang ---------- */
+document.addEventListener("visibilitychange", function () {
+  if (document.visibilityState === "hidden") { if (st.phase === "exam") submit("visibility"); }
+  else if (st.phase === "sending" && !st.busy) upload(false);
+});
+window.addEventListener("pagehide", function () { if (st.phase === "exam") submit("pagehide"); });
+window.addEventListener("online", function () { if (st.phase === "sending" && !st.busy) upload(false); });
+window.addEventListener("blur", function () {   // chỉ ghi nhật ký, không thu bài
+  if (st.phase !== "exam" || st.blur.length >= 15) return;
+  var sec = Math.max(0, Math.round((Date.now() + st.offset - (st.endMs - 3600000)) / 1000));
+  st.blur.push("blur@" + sec + "s");
+});
+
+/* ---------- Khởi động: gửi lại bài còn tồn ---------- */
+(function init() {
+  var p = loadPending();
+  if (!p || !p.token) return;
+  st.token = p.token; st.ans = p.answers || {}; st.reason = p.reason || "reopen";
+  st.blur = p.log ? [String(p.log)] : [];
+  st.phase = "sending";
+  show("result"); sending(false);
+  upload(false);
+})();
+})();
+</script>
+</body>
+</html>
